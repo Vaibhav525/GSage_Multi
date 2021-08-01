@@ -158,7 +158,7 @@ def apply_model(dataCenter, ds, graphSage, classification, unsupervised_loss, b_
 
 			# extend nodes batch for unspervised learning
 			# no conflicts with supervised learning
-			nodes_batch = np.asarray(list(unsupervised_loss.extend_nodes(nodes_batch, num_neg=num_neg)))
+			nodes_batch = np.asarray(list(unsupervised_loss[k].extend_nodes(nodes_batch, num_neg=num_neg)))
 			visited_nodes |= set(nodes_batch)
 
 			# get ground-truth for the nodes batch
@@ -166,7 +166,7 @@ def apply_model(dataCenter, ds, graphSage, classification, unsupervised_loss, b_
 
 			# feed nodes batch to the graphSAGE
 			# returning the nodes embeddings
-			embs_batch = graphSage(nodes_batch)
+			embs_batch = graphSage(nodes_batch,torch.FloatTensor(getattr(dataCenter, ds+'_feats')[k]).to(device), getattr(dataCenter, ds+'_adj_lists')[k])
 
 			if learn_method == 'sup':
 				# superivsed learning
@@ -181,15 +181,15 @@ def apply_model(dataCenter, ds, graphSage, classification, unsupervised_loss, b_
 				loss_sup /= len(nodes_batch)
 				# unsuperivsed learning
 				if unsup_loss == 'margin':
-					loss_net = unsupervised_loss.get_loss_margin(embs_batch, nodes_batch)
+					loss_net = unsupervised_loss[k].get_loss_margin(embs_batch, nodes_batch)
 				elif unsup_loss == 'normal':
-					loss_net = unsupervised_loss.get_loss_sage(embs_batch, nodes_batch)
+					loss_net = unsupervised_loss[k].get_loss_sage(embs_batch, nodes_batch)
 				loss = loss_sup + loss_net
 			else:
 				if unsup_loss == 'margin':
-					loss_net = unsupervised_loss.get_loss_margin(embs_batch, nodes_batch)
+					loss_net = unsupervised_loss[k].get_loss_margin(embs_batch, nodes_batch)
 				elif unsup_loss == 'normal':
-					loss_net = unsupervised_loss.get_loss_sage(embs_batch, nodes_batch)
+					loss_net = unsupervised_loss[k].get_loss_sage(embs_batch, nodes_batch)
 				loss = loss_net
 			
 			Batchloss+=loss

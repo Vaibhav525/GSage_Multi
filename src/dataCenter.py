@@ -32,7 +32,7 @@ class DataCenter(object):
 			labels_i=[]
 			adj_lists_i=[]
 			for k in range(120):
-				G :nx.Graph=nx.read_graphml(DualLJ+"\\"+str(k)+"Dual.gml")
+				G :nx.Graph=nx.read_graphml(DualLJ+"/"+str(k)+"Dual.gml")
 				Bin_type_label=[[1,0,0],[0,1,0],[1,0,0]]	#Type 2=[1,0,0] ,3=[0,1,0],4=[0,0,1]
 				feat_data = []
 				labels = [] # label sequence of node
@@ -85,7 +85,7 @@ class DataCenter(object):
 			adj_lists_i=[]
 			for k in range(120):
 				
-				G :nx.Graph=nx.read_graphml(NormLJ+"\\"+str(k)+"Norm.gml")
+				G :nx.Graph=nx.read_graphml(NormLJ+"/"+str(k)+"Norm.gml")
 				Bin_type_label=[[1,0],[0,1]]
 				feat_data = []
 				labels = [] # label sequence of node
