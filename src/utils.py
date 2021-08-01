@@ -136,10 +136,10 @@ def apply_model(dataCenter, ds, graphSage, classification, unsupervised_loss, b_
 	N=len(getattr(dataCenter, ds+'_train'))
 	graph_data_indexes=shuffle([i for i in range(N)])
 	graph_batch_len=5									#Batch_size for multiple graphs
-
+	counter=0
 	for k in graph_data_indexes:
 		#Specify datacenter=load_dataset[i]
-		if(k%graph_batch_len==0):
+		if(counter%graph_batch_len==0):
 			Batchloss=0 		#after every n_bacth_len steps
 		
 		test_nodes = getattr(dataCenter, ds+'_test')[k]
@@ -192,11 +192,11 @@ def apply_model(dataCenter, ds, graphSage, classification, unsupervised_loss, b_
 					loss_net = unsupervised_loss[k].get_loss_sage(embs_batch, nodes_batch)
 				loss = loss_net
 			
-			Batchloss+=loss
-			print('Step [{}/{}], Loss: {:.4f}, Dealed Nodes [{}/{}] '.format(index+1, batches, loss.item(), len(visited_nodes), len(train_nodes)))
-			if((k+1)%graph_batch_len==0):
-				Batchloss/=graph_batch_len		#Do after every n steps , divide loss by n
-				Batchloss.backward() #after every n steps
+			Batchloss+=loss #Currently adds loss of eatch node_batch, can be taken to outer loop, to take only one loss per graph 
+		if((counter+1)%graph_batch_len==0):
+			Batchloss/=graph_batch_len		#Do after every n steps , divide loss by n
+			print(counter+1,'Step [{}/{}], Loss: {:.4f}, Dealed Nodes [{}/{}] '.format(index+1, batches, Batchloss.item(), len(visited_nodes), len(train_nodes)))			
+			Batchloss.backward() #after every n steps
 			for model in models:
 				nn.utils.clip_grad_norm_(model.parameters(), 5)
 			optimizer.step()	
@@ -204,5 +204,6 @@ def apply_model(dataCenter, ds, graphSage, classification, unsupervised_loss, b_
 			optimizer.zero_grad()
 			for model in models:
 				model.zero_grad()
+		counter+=1
 
 	return graphSage, classification
