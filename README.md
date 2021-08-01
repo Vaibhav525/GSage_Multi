@@ -1,4 +1,4 @@
-## A PyTorch implementation of GraphSAGE(Currently not working)
+## A PyTorch implementation of GraphSAGE
 
 This package contains a PyTorch implementation of [GraphSAGE](http://snap.stanford.edu/graphsage/).
 
