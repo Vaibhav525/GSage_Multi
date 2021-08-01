@@ -194,7 +194,6 @@ def apply_model(dataCenter, ds, graphSage, classification, unsupervised_loss, b_
 			
 			Batchloss+=loss
 			print('Step [{}/{}], Loss: {:.4f}, Dealed Nodes [{}/{}] '.format(index+1, batches, loss.item(), len(visited_nodes), len(train_nodes)))
-			loss.backward()
 			if((k+1)%graph_batch_len==0):
 				Batchloss/=graph_batch_len		#Do after every n steps , divide loss by n
 				Batchloss.backward() #after every n steps
